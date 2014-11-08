@@ -16,7 +16,9 @@ p = zeros(size(X, 1), 1);
 
 % Add ones to the X data matrix
 X = [ones(m, 1) X];
-
+predictions = sigmoid(X * all_theta');
+[C,p2] = max(predictions, [], 2);
+p = p2';
 % ====================== YOUR CODE HERE ======================
 % Instructions: Complete the following code to make predictions using
 %               your learned logistic regression parameters (one-vs-all).
