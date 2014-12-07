@@ -30,12 +30,79 @@ J = 0;
 Theta1_grad = zeros(size(Theta1));
 Theta2_grad = zeros(size(Theta2));
 
+h1 = sigmoid([ones(m, 1) X] * Theta1');
+h2 = sigmoid([ones(m, 1) h1] * Theta2');
+
+%theoY = zeros(size(X, 1), num_labels);
+mY = zeros(size(X, 1), num_labels);
+for i=1 : size(X, 1)
+%    theoY(i,predictions(i)) = 1;
+    mY(i,y(i)) = 1;
+%y
+end
+
+
+
+J1 = sum(sum(1/m*((-mY .* (log(h2)))+(-(1-mY) .* (log(1-h2))))));
+
+J2 = sum(sum((lambda /(2*m))*(Theta1(:,2:size(Theta1,2)) .* Theta1(:,2:size(Theta1,2)))))  + sum(sum((lambda /(2*m))*(Theta2(:,2:size(Theta2,2)) .* Theta2(:,2:size(Theta2,2)))));
+
+J = J1+J2;
+
+
+%h1 = sigmoid([ones(m, 1) X] * Theta1');
+%h2 = sigmoid([ones(m, 1) h1] * Theta2');
+%delta_3 = h2 - mY;
+%delta_2 =((Theta2(:,2:size(Theta2, 2)))' * delta_3')' .* sigmoidGradient([ones(m, 1) X] * Theta1');
+
+%gDelta2 = h1' * delta_3;   
+%Theta2_grad = [zeros(size(Theta2, 1), 1) (1/m * gDelta2)'];
+
+%gDelta1 = X' * delta_2
+%Theta1_grad = [zeros(size(Theta1, 1), 1) (1/m * gDelta1)'];
+    
+
+gDelta1 = zeros(size(Theta1));
+gDelta2 = zeros(size(Theta2));
+%X = [ones(m, 1) X];
+
+for t=1: m
+    a_1 = X(t, : );
+    a_1 = [1 a_1];
+    z_2 = a_1 * Theta1';
+    a_2 = [1.0 sigmoid(z_2)];
+    z_3 = a_2 * Theta2';
+    a_3 = sigmoid(z_3);
+    
+    delta_3 = a_3 - mY(t,:);
+    delta_2 = (Theta2(:, 2:end))' * delta_3' .* sigmoidGradient(z_2)'; 
+    
+    gDelta2 = gDelta2 + delta_3' * a_2;
+    gDelta1 = gDelta1 + delta_2 * a_1; 
+    
+    
+end
+
+gDelta1 = 1/m * gDelta1 + (lambda/m) * [zeros(size(Theta1, 1), 1) (Theta1(:, 2:end))];
+gDelta2 = 1/m * gDelta2 + (lambda/m) * [zeros(size(Theta2, 1), 1) (Theta2(:, 2:end))];
+
+Theta1_grad = gDelta1;
+Theta2_grad = gDelta2;
+
+
+
+
+
+grad = [Theta1_grad(:) ;Theta2_grad(:)];
+
+
+
 % ====================== YOUR CODE HERE ======================
 % Instructions: You should complete the code by working through the
 %               following parts.
 %
 % Part 1: Feedforward the neural network and return the cost in the
-%         variable J. After implementing Part 1, you can verify that your
+%         variable J. After implementing Part 1, you can verify that your'
 %         cost function computation is correct by verifying the cost
 %         computed in ex4.m
 %
@@ -82,10 +149,4 @@ Theta2_grad = zeros(size(Theta2));
 
 % -------------------------------------------------------------
 
-% =========================================================================
-
-% Unroll gradients
-grad = [Theta1_grad(:) ; Theta2_grad(:)];
-
-
-end
+% =======================================================================
